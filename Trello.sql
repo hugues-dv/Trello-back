@@ -2,14 +2,14 @@ CREATE DATABASE IF NOT EXISTS Trello_db;
 
 -- SQLite
 CREATE TABLE IF NOT EXISTS Projet (
-id INT PRIMARY KEY,
-Nom varchar (50),
-Description varchar (50),
-DateCreation DATETIME
+    Id INT PRIMARY KEY,
+    Nom varchar (50),
+    Description varchar (50),
+    DateCreation DATETIME
 ); 
 
 CREATE TABLE IF NOT EXISTS Liste (
-    Id INTEGER PRIMARY KEY,
+    Id INT PRIMARY KEY,
     Nom varchar (50),
     IdProjet INT,
     FOREIGN KEY (IdProjet) REFERENCES Projet(Id)

@@ -9,6 +9,8 @@ using Trello_back.Models;
 
 namespace Trello_back.Controllers
 {
+    [Route("/[controller]")]
+    [ApiController]
     public class ProjetController : Controller
     {
         private readonly TrelloContext _context;
@@ -18,14 +20,15 @@ namespace Trello_back.Controllers
             _context = context;
         }
 
-        // GET: Projet
-        public async Task<IActionResult> Index()
+        [HttpGet]
+        public async Task<IActionResult> GetProjets()
         {
-            return View(await _context.Projets.ToListAsync());
+            var Projets = await _context.Projets.ToListAsync();
+            return Ok(Projets);
         }
 
-        // GET: Projet/Details/5
-        public async Task<IActionResult> Details(int? id)
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetProjetById(int? id)
         {
             if (id == null)
             {
@@ -39,13 +42,7 @@ namespace Trello_back.Controllers
                 return NotFound();
             }
 
-            return View(projet);
-        }
-
-        // GET: Projet/Create
-        public IActionResult Create()
-        {
-            return View();
+            return Ok(projet);
         }
 
         // POST: Projet/Create
@@ -53,41 +50,31 @@ namespace Trello_back.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Nom,Description,DateCreation")] Projet projet)
+        public async Task<IActionResult> CreateProjet(Models.Projet projet)
         {
             if (ModelState.IsValid)
             {
                 _context.Add(projet);
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                return CreatedAtAction(nameof(GetProjetById), new { id = projet.Id }, projet);
             }
-            return View(projet);
-        }
-
-        // GET: Projet/Edit/5
-        public async Task<IActionResult> Edit(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var projet = await _context.Projets.FindAsync(id);
-            if (projet == null)
-            {
-                return NotFound();
-            }
-            return View(projet);
+            return BadRequest(ModelState);
         }
 
         // POST: Projet/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
+        [HttpPut("{id}")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Nom,Description,DateCreation")] Projet projet)
+        public async Task<IActionResult> EditProjet(int id, Models.Projet projet)
         {
             if (id != projet.Id)
+            {
+                return NotFound();
+            }
+
+            var existingProjet = await _context.Projets.FindAsync(id);
+            if (existingProjet == null)
             {
                 return NotFound();
             }
@@ -96,8 +83,9 @@ namespace Trello_back.Controllers
             {
                 try
                 {
-                    _context.Update(projet);
+                    _context.Entry(existingProjet).CurrentValues.SetValues(projet);
                     await _context.SaveChangesAsync();
+                    return NoContent();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -110,47 +98,28 @@ namespace Trello_back.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
             }
-            return View(projet);
+            return BadRequest(ModelState);
         }
 
-        // GET: Projet/Delete/5
-        public async Task<IActionResult> Delete(int? id)
+        [HttpDelete("{id}")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteProjet(int id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var projet = await _context.Projets
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var projet = await _context.Projets.FindAsync(id);
             if (projet == null)
             {
                 return NotFound();
             }
 
-            return View(projet);
-        }
-
-        // POST: Projet/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
-        {
-            var projet = await _context.Projets.FindAsync(id);
-            if (projet != null)
-            {
-                _context.Projets.Remove(projet);
-            }
-
+            _context.Projets.Remove(projet);
             await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            return NoContent();
         }
-
         private bool ProjetExists(int id)
         {
             return _context.Projets.Any(e => e.Id == id);
         }
+
     }
 }

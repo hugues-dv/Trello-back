@@ -9,6 +9,8 @@ using Trello_back.Models;
 
 namespace Trello_back.Controllers
 {
+    [Route("/[controller]")]
+    [ApiController]
     public class ListeController : Controller
     {
         private readonly TrelloContext _context;
@@ -18,15 +20,15 @@ namespace Trello_back.Controllers
             _context = context;
         }
 
-        // GET: Liste
-        public async Task<IActionResult> Index()
+        [HttpGet]
+        public async Task<IActionResult> GetListes()
         {
-            var trelloContext = _context.Listes.Include(l => l.IdProjetNavigation);
-            return View(await trelloContext.ToListAsync());
+            var Listes = await _context.Listes.ToListAsync();
+            return Ok(Listes);
         }
 
-        // GET: Liste/Details/5
-        public async Task<IActionResult> Details(int? id)
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetListeById(int? id)
         {
             if (id == null)
             {
@@ -34,65 +36,43 @@ namespace Trello_back.Controllers
             }
 
             var liste = await _context.Listes
-                .Include(l => l.IdProjetNavigation)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (liste == null)
             {
                 return NotFound();
             }
 
-            return View(liste);
+            return Ok(liste);
         }
 
         // GET: Liste/Create
-        public IActionResult Create()
-        {
-            ViewData["IdProjet"] = new SelectList(_context.Projets, "Id", "Id");
-            return View();
-        }
-
-        // POST: Liste/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Nom,IdProjet")] Liste liste)
+        public async Task<IActionResult> CreateListe(Models.Liste liste)
         {
             if (ModelState.IsValid)
             {
                 _context.Add(liste);
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                return CreatedAtAction(nameof(GetListeById), new { id = liste.Id }, liste);
             }
-            ViewData["IdProjet"] = new SelectList(_context.Projets, "Id", "Id", liste.IdProjet);
-            return View(liste);
+            return BadRequest(ModelState);
         }
 
-        // GET: Liste/Edit/5
-        public async Task<IActionResult> Edit(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var liste = await _context.Listes.FindAsync(id);
-            if (liste == null)
-            {
-                return NotFound();
-            }
-            ViewData["IdProjet"] = new SelectList(_context.Projets, "Id", "Id", liste.IdProjet);
-            return View(liste);
-        }
-
-        // POST: Liste/Edit/5
+        // POST: Liste/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
+        [HttpPut("{id}")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Nom,IdProjet")] Liste liste)
+        public async Task<IActionResult> EditListe(int id, Models.Liste liste)
         {
             if (id != liste.Id)
+            {
+                return NotFound();
+            }
+
+            var existingListe = await _context.Listes.FindAsync(id);
+            if (existingListe == null)
             {
                 return NotFound();
             }
@@ -101,8 +81,9 @@ namespace Trello_back.Controllers
             {
                 try
                 {
-                    _context.Update(liste);
+                    _context.Entry(existingListe).CurrentValues.SetValues(liste);
                     await _context.SaveChangesAsync();
+                    return NoContent();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -115,44 +96,23 @@ namespace Trello_back.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
             }
-            ViewData["IdProjet"] = new SelectList(_context.Projets, "Id", "Id", liste.IdProjet);
-            return View(liste);
+            return BadRequest(ModelState);
         }
 
-        // GET: Liste/Delete/5
-        public async Task<IActionResult> Delete(int? id)
+        [HttpDelete("{id}")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteListe(int id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var liste = await _context.Listes
-                .Include(l => l.IdProjetNavigation)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var liste = await _context.Listes.FindAsync(id);
             if (liste == null)
             {
                 return NotFound();
             }
 
-            return View(liste);
-        }
-
-        // POST: Liste/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
-        {
-            var liste = await _context.Listes.FindAsync(id);
-            if (liste != null)
-            {
-                _context.Listes.Remove(liste);
-            }
-
+            _context.Listes.Remove(liste);
             await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            return NoContent();
         }
 
         private bool ListeExists(int id)

@@ -9,6 +9,8 @@ using Trello_back.Models;
 
 namespace Trello_back.Controllers
 {
+    [Route("/[controller]")]
+    [ApiController]
     public class CommentaireController : Controller
     {
         private readonly TrelloContext _context;
@@ -18,15 +20,15 @@ namespace Trello_back.Controllers
             _context = context;
         }
 
-        // GET: Commentaire
-        public async Task<IActionResult> Index()
+        [HttpGet]
+        public async Task<IActionResult> GetCommentaires()
         {
-            var trelloContext = _context.Commentaires.Include(c => c.IdCarteNavigation);
-            return View(await trelloContext.ToListAsync());
+            var Commentaires = await _context.Commentaires.ToListAsync();
+            return Ok(Commentaires);
         }
 
-        // GET: Commentaire/Details/5
-        public async Task<IActionResult> Details(int? id)
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetCommentaireById(int? id)
         {
             if (id == null)
             {
@@ -34,21 +36,13 @@ namespace Trello_back.Controllers
             }
 
             var commentaire = await _context.Commentaires
-                .Include(c => c.IdCarteNavigation)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (commentaire == null)
             {
                 return NotFound();
             }
 
-            return View(commentaire);
-        }
-
-        // GET: Commentaire/Create
-        public IActionResult Create()
-        {
-            ViewData["IdCarte"] = new SelectList(_context.Cartes, "Id", "Id");
-            return View();
+            return Ok(commentaire);
         }
 
         // POST: Commentaire/Create
@@ -56,43 +50,31 @@ namespace Trello_back.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Contenu,DateCreation,IdCarte,Utilisateur")] Commentaire commentaire)
+        public async Task<IActionResult> CreateCommentaire(Models.Commentaire commentaire)
         {
             if (ModelState.IsValid)
             {
                 _context.Add(commentaire);
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                return CreatedAtAction(nameof(GetCommentaireById), new { id = commentaire.Id }, commentaire);
             }
-            ViewData["IdCarte"] = new SelectList(_context.Cartes, "Id", "Id", commentaire.IdCarte);
-            return View(commentaire);
-        }
-
-        // GET: Commentaire/Edit/5
-        public async Task<IActionResult> Edit(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var commentaire = await _context.Commentaires.FindAsync(id);
-            if (commentaire == null)
-            {
-                return NotFound();
-            }
-            ViewData["IdCarte"] = new SelectList(_context.Cartes, "Id", "Id", commentaire.IdCarte);
-            return View(commentaire);
+            return BadRequest(ModelState);
         }
 
         // POST: Commentaire/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
+        [HttpPut("{id}")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Contenu,DateCreation,IdCarte,Utilisateur")] Commentaire commentaire)
+        public async Task<IActionResult> EditCommentaire(int id, Models.Commentaire commentaire)
         {
             if (id != commentaire.Id)
+            {
+                return NotFound();
+            }
+
+            var existingCommentaire = await _context.Commentaires.FindAsync(id);
+            if (existingCommentaire == null)
             {
                 return NotFound();
             }
@@ -101,8 +83,9 @@ namespace Trello_back.Controllers
             {
                 try
                 {
-                    _context.Update(commentaire);
+                    _context.Entry(existingCommentaire).CurrentValues.SetValues(commentaire);
                     await _context.SaveChangesAsync();
+                    return NoContent();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -115,44 +98,25 @@ namespace Trello_back.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
             }
-            ViewData["IdCarte"] = new SelectList(_context.Cartes, "Id", "Id", commentaire.IdCarte);
-            return View(commentaire);
+            return BadRequest(ModelState);
         }
 
-        // GET: Commentaire/Delete/5
-        public async Task<IActionResult> Delete(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
 
-            var commentaire = await _context.Commentaires
-                .Include(c => c.IdCarteNavigation)
-                .FirstOrDefaultAsync(m => m.Id == id);
+        // POST: Commentaire/Delete/5
+        [HttpDelete("{id}")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteCommentaire(int id)
+        {
+            var commentaire = await _context.Commentaires.FindAsync(id);
             if (commentaire == null)
             {
                 return NotFound();
             }
 
-            return View(commentaire);
-        }
-
-        // POST: Commentaire/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
-        {
-            var commentaire = await _context.Commentaires.FindAsync(id);
-            if (commentaire != null)
-            {
-                _context.Commentaires.Remove(commentaire);
-            }
-
+            _context.Commentaires.Remove(commentaire);
             await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            return NoContent();
         }
 
         private bool CommentaireExists(int id)

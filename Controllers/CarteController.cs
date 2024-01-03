@@ -9,6 +9,8 @@ using Trello_back.Models;
 
 namespace Trello_back.Controllers
 {
+    [Route("/[controller]")]
+    [ApiController]
     public class CarteController : Controller
     {
         private readonly TrelloContext _context;
@@ -19,14 +21,16 @@ namespace Trello_back.Controllers
         }
 
         // GET: Carte
-        public async Task<IActionResult> Index()
+        [HttpGet]
+        public async Task<IActionResult> GetCartes()
         {
-            var trelloContext = _context.Cartes.Include(c => c.IdListeNavigation);
-            return View(await trelloContext.ToListAsync());
+            var Cartes = await _context.Cartes.ToListAsync();
+            return Ok(Cartes);
         }
 
         // GET: Carte/Details/5
-        public async Task<IActionResult> Details(int? id)
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetCarteById(int? id)
         {
             if (id == null)
             {
@@ -34,21 +38,13 @@ namespace Trello_back.Controllers
             }
 
             var carte = await _context.Cartes
-                .Include(c => c.IdListeNavigation)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (carte == null)
             {
                 return NotFound();
             }
 
-            return View(carte);
-        }
-
-        // GET: Carte/Create
-        public IActionResult Create()
-        {
-            ViewData["IdListe"] = new SelectList(_context.Listes, "Id", "Id");
-            return View();
+            return Ok(carte);
         }
 
         // POST: Carte/Create
@@ -56,43 +52,31 @@ namespace Trello_back.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Titre,Description,DateCreation,IdListe")] Carte carte)
+        public async Task<IActionResult> CreateCarte(Models.Carte carte)
         {
             if (ModelState.IsValid)
             {
                 _context.Add(carte);
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                return CreatedAtAction(nameof(GetCarteById), new { id = carte.Id }, carte);
             }
-            ViewData["IdListe"] = new SelectList(_context.Listes, "Id", "Id", carte.IdListe);
-            return View(carte);
-        }
-
-        // GET: Carte/Edit/5
-        public async Task<IActionResult> Edit(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var carte = await _context.Cartes.FindAsync(id);
-            if (carte == null)
-            {
-                return NotFound();
-            }
-            ViewData["IdListe"] = new SelectList(_context.Listes, "Id", "Id", carte.IdListe);
-            return View(carte);
+            return BadRequest(ModelState);
         }
 
         // POST: Carte/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
+        [HttpPut("{id}")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Titre,Description,DateCreation,IdListe")] Carte carte)
+        public async Task<IActionResult> EditCarte(int id, Models.Carte carte)
         {
             if (id != carte.Id)
+            {
+                return NotFound();
+            }
+
+            var existingCarte = await _context.Cartes.FindAsync(id);
+            if (existingCarte == null)
             {
                 return NotFound();
             }
@@ -101,8 +85,9 @@ namespace Trello_back.Controllers
             {
                 try
                 {
-                    _context.Update(carte);
+                    _context.Entry(existingCarte).CurrentValues.SetValues(carte);
                     await _context.SaveChangesAsync();
+                    return NoContent();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -115,46 +100,25 @@ namespace Trello_back.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
             }
-            ViewData["IdListe"] = new SelectList(_context.Listes, "Id", "Id", carte.IdListe);
-            return View(carte);
+            return BadRequest(ModelState);
         }
 
-        // GET: Carte/Delete/5
-        public async Task<IActionResult> Delete(int? id)
+        // POST: Carte/Delete/5
+        [HttpDelete("{id}")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteCarte(int id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var carte = await _context.Cartes
-                .Include(c => c.IdListeNavigation)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var carte = await _context.Cartes.FindAsync(id);
             if (carte == null)
             {
                 return NotFound();
             }
 
-            return View(carte);
-        }
-
-        // POST: Carte/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
-        {
-            var carte = await _context.Cartes.FindAsync(id);
-            if (carte != null)
-            {
-                _context.Cartes.Remove(carte);
-            }
-
+            _context.Cartes.Remove(carte);
             await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            return NoContent();
         }
-
         private bool CarteExists(int id)
         {
             return _context.Cartes.Any(e => e.Id == id);

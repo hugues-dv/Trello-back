@@ -25,7 +25,7 @@ namespace Trello_back.Controllers
             return Ok(Cartes);
         }
 
-        // GET: Carte/Details/5
+        // GET: Carte/5
         [HttpGet("{id}")]
         public async Task<IActionResult> GetCarteById(int? id)
         {

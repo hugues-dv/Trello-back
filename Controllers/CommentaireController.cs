@@ -16,6 +16,7 @@ namespace Trello_back.Controllers
         {
             _context = context;
         }
+        // GET: Commentaire
 
         [HttpGet]
         public async Task<IActionResult> GetCommentaires()
@@ -24,6 +25,7 @@ namespace Trello_back.Controllers
             return Ok(Commentaires);
         }
 
+        // GET: Commentaire/5
         [HttpGet("{id}")]
         public async Task<IActionResult> GetCommentaireById(int? id)
         {

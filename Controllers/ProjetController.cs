@@ -17,6 +17,7 @@ namespace Trello_back.Controllers
             _context = context;
         }
 
+        //GET: Projet
         [HttpGet]
         public async Task<IActionResult> GetProjets()
         {
@@ -24,6 +25,7 @@ namespace Trello_back.Controllers
             return Ok(Projets);
         }
 
+        //GET: Projet/5
         [HttpGet("{id}")]
         public async Task<IActionResult> GetProjetById(int? id)
         {
@@ -99,6 +101,7 @@ namespace Trello_back.Controllers
             return BadRequest(ModelState);
         }
 
+        // POST: Projet/Delete/5
         [HttpDelete("{id}")]
         // [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteProjet(int id)

@@ -17,6 +17,7 @@ namespace Trello_back.Controllers
             _context = context;
         }
 
+        //GET: Projet
         [HttpGet]
         public async Task<IActionResult> GetProjets()
         {
@@ -24,6 +25,7 @@ namespace Trello_back.Controllers
             return Ok(Projets);
         }
 
+        //GET: Projet/5
         [HttpGet("{id}")]
         public async Task<IActionResult> GetProjetById(int? id)
         {
@@ -58,12 +60,12 @@ namespace Trello_back.Controllers
             return BadRequest(ModelState);
         }
 
-        // POST: Projet/Edit/5
+        // POST: Projet/Update/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPut("{id}")]
         // [ValidateAntiForgeryToken]
-        public async Task<IActionResult> EditProjet(int id, Models.Projet projet)
+        public async Task<IActionResult> UpdateProjet(int id, Models.Projet projet)
         {
             if (id != projet.Id)
             {
@@ -99,6 +101,7 @@ namespace Trello_back.Controllers
             return BadRequest(ModelState);
         }
 
+        // POST: Projet/Delete/5
         [HttpDelete("{id}")]
         // [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteProjet(int id)

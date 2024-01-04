@@ -61,7 +61,7 @@ namespace Trello_back.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPut("{id}")]
         // [ValidateAntiForgeryToken]
-        public async Task<IActionResult> EditListe(int id, Models.Liste liste)
+        public async Task<IActionResult> UpdateListe(int id, Models.Liste liste)
         {
             if (id != liste.Id)
             {

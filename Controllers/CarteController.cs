@@ -60,12 +60,12 @@ namespace Trello_back.Controllers
             return BadRequest(ModelState);
         }
 
-        // POST: Carte/Edit/5
+        // POST: Carte/Update/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPut("{id}")]
         // [ValidateAntiForgeryToken]
-        public async Task<IActionResult> EditCarte(int id, Models.Carte carte)
+        public async Task<IActionResult> UpdateCarte(int id, Models.Carte carte)
         {
             if (id != carte.Id)
             {

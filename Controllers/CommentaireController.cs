@@ -46,7 +46,7 @@ namespace Trello_back.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
-        [ValidateAntiForgeryToken]
+        // [ValidateAntiForgeryToken]
         public async Task<IActionResult> CreateCommentaire(Models.Commentaire commentaire)
         {
             if (ModelState.IsValid)
@@ -62,7 +62,7 @@ namespace Trello_back.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPut("{id}")]
-        [ValidateAntiForgeryToken]
+        // [ValidateAntiForgeryToken]
         public async Task<IActionResult> EditCommentaire(int id, Models.Commentaire commentaire)
         {
             if (id != commentaire.Id)
@@ -102,7 +102,7 @@ namespace Trello_back.Controllers
 
         // POST: Commentaire/Delete/5
         [HttpDelete("{id}")]
-        [ValidateAntiForgeryToken]
+        // [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteCommentaire(int id)
         {
             var commentaire = await _context.Commentaires.FindAsync(id);

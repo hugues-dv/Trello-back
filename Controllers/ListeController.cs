@@ -44,7 +44,7 @@ namespace Trello_back.Controllers
 
         // GET: Liste/Create
         [HttpPost]
-        [ValidateAntiForgeryToken]
+        // [ValidateAntiForgeryToken]
         public async Task<IActionResult> CreateListe(Models.Liste liste)
         {
             if (ModelState.IsValid)
@@ -60,7 +60,7 @@ namespace Trello_back.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPut("{id}")]
-        [ValidateAntiForgeryToken]
+        // [ValidateAntiForgeryToken]
         public async Task<IActionResult> EditListe(int id, Models.Liste liste)
         {
             if (id != liste.Id)
@@ -98,7 +98,7 @@ namespace Trello_back.Controllers
         }
 
         [HttpDelete("{id}")]
-        [ValidateAntiForgeryToken]
+        // [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteListe(int id)
         {
             var liste = await _context.Listes.FindAsync(id);

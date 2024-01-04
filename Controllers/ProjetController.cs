@@ -46,7 +46,7 @@ namespace Trello_back.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
-        [ValidateAntiForgeryToken]
+        // [ValidateAntiForgeryToken]
         public async Task<IActionResult> CreateProjet(Models.Projet projet)
         {
             if (ModelState.IsValid)
@@ -62,7 +62,7 @@ namespace Trello_back.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPut("{id}")]
-        [ValidateAntiForgeryToken]
+        // [ValidateAntiForgeryToken]
         public async Task<IActionResult> EditProjet(int id, Models.Projet projet)
         {
             if (id != projet.Id)
@@ -100,7 +100,7 @@ namespace Trello_back.Controllers
         }
 
         [HttpDelete("{id}")]
-        [ValidateAntiForgeryToken]
+        // [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteProjet(int id)
         {
             var projet = await _context.Projets.FindAsync(id);

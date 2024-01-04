@@ -48,7 +48,7 @@ namespace Trello_back.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
-        [ValidateAntiForgeryToken]
+        // [ValidateAntiForgeryToken]
         public async Task<IActionResult> CreateCarte(Models.Carte carte)
         {
             if (ModelState.IsValid)
@@ -64,7 +64,7 @@ namespace Trello_back.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPut("{id}")]
-        [ValidateAntiForgeryToken]
+        // [ValidateAntiForgeryToken]
         public async Task<IActionResult> EditCarte(int id, Models.Carte carte)
         {
             if (id != carte.Id)
@@ -103,7 +103,7 @@ namespace Trello_back.Controllers
 
         // POST: Carte/Delete/5
         [HttpDelete("{id}")]
-        [ValidateAntiForgeryToken]
+        // [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteCarte(int id)
         {
             var carte = await _context.Cartes.FindAsync(id);

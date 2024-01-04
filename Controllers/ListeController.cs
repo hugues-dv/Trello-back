@@ -47,7 +47,7 @@ namespace Trello_back.Controllers
         // GET: Liste/Create
         [HttpPost]
         // [ValidateAntiForgeryToken]
-        public async Task<IActionResult> CreateListe(Models.Liste liste)
+        public async Task<IActionResult> CreateListe([Bind("Id,Nom,IdProjet")] Liste liste)
         {
             if (ModelState.IsValid)
             {
@@ -63,7 +63,7 @@ namespace Trello_back.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPut("{id}")]
         // [ValidateAntiForgeryToken]
-        public async Task<IActionResult> UpdateListe(int id, Models.Liste liste)
+        public async Task<IActionResult> UpdateListe(int id, [Bind("Id,Nom,IdProjet")] Liste liste)
         {
             if (id != liste.Id)
             {

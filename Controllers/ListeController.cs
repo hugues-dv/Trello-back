@@ -19,10 +19,15 @@ namespace Trello_back.Controllers
 
         // GET: Liste
         [HttpGet]
-        public async Task<IActionResult> GetListes()
+        public IActionResult GetListes(int? projectId)
         {
-            var Listes = await _context.Listes.ToListAsync();
-            return Ok(Listes);
+            IQueryable<Liste> listes = _context.Listes;
+            if (projectId != null)
+            {
+                listes = listes.Where(m => m.IdProjet == projectId);
+            }
+
+            return Ok(listes);
         }
 
         // GET: Liste/5

@@ -8,11 +8,17 @@ CREATE TABLE IF NOT EXISTS Projects (
     createdAt DATETIME
 ); 
 
-CREATE TABLE IF NOT EXISTS lists (
+CREATE TABLE IF NOT EXISTS Lists (
     id INT PRIMARY KEY,
     name varchar (50),
-    idProject INT,
-    FOREIGN KEY (idProject) REFERENCES Projects(id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS ProjectListAssociation (
+    projectId INT,
+    listId INT,
+    PRIMARY KEY (projectId, listId),
+    FOREIGN KEY (projectId) REFERENCES Projects(id) ON DELETE CASCADE,
+    FOREIGN KEY (listId) REFERENCES Lists(id) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS Cards (

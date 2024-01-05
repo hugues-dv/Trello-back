@@ -8,72 +8,72 @@ namespace Trello_back.Controllers
 {
     [Route("/[controller]")]
     [ApiController]
-    public class CommentaireController : Controller
+    public class CommentController : Controller
     {
         private readonly TrelloContext _context;
 
-        public CommentaireController(TrelloContext context)
+        public CommentController(TrelloContext context)
         {
             _context = context;
         }
-        // GET: Commentaire
+        // GET: Comment
 
         [HttpGet]
-        public async Task<IActionResult> GetCommentaires()
+        public async Task<IActionResult> GetComments()
         {
-            var Commentaires = await _context.Commentaires.ToListAsync();
-            return Ok(Commentaires);
+            var Comments = await _context.Comments.ToListAsync();
+            return Ok(Comments);
         }
 
-        // GET: Commentaire/5
+        // GET: Comment/5
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetCommentaireById(int? id)
+        public async Task<IActionResult> GetCommentById(int? id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var commentaire = await _context.Commentaires
+            var comment = await _context.Comments
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (commentaire == null)
+            if (comment == null)
             {
                 return NotFound();
             }
 
-            return Ok(commentaire);
+            return Ok(comment);
         }
 
-        // POST: Commentaire/Create
+        // POST: Comment/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         // [ValidateAntiForgeryToken]
-        public async Task<IActionResult> CreateCommentaire([Bind("Id,Contenu,DateCreation,IdCarte,Utilisateur")] Commentaire commentaire)
+        public async Task<IActionResult> CreateComment([Bind("id,content,createdAt,idCard,user")] Comment comment)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(commentaire);
+                _context.Add(comment);
                 await _context.SaveChangesAsync();
-                return CreatedAtAction(nameof(GetCommentaireById), new { id = commentaire.Id }, commentaire);
+                return CreatedAtAction(nameof(GetCommentById), new { id = comment.Id }, comment);
             }
             return BadRequest(ModelState);
         }
 
-        // POST: Commentaire/Update/5
+        // POST: Comment/Update/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPut("{id}")]
         // [ValidateAntiForgeryToken]
-        public async Task<IActionResult> UpdateCommentaire(int id, [Bind("Id,Contenu,DateCreation,IdCarte,Utilisateur")] Commentaire commentaire)
+        public async Task<IActionResult> UpdateComment(int id, [Bind("id,content,createdAt,idCard,user")] Comment comment)
         {
-            if (id != commentaire.Id)
+            if (id != comment.Id)
             {
                 return NotFound();
             }
 
-            var existingCommentaire = await _context.Commentaires.FindAsync(id);
-            if (existingCommentaire == null)
+            var existingComment = await _context.Comments.FindAsync(id);
+            if (existingComment == null)
             {
                 return NotFound();
             }
@@ -82,13 +82,13 @@ namespace Trello_back.Controllers
             {
                 try
                 {
-                    _context.Entry(existingCommentaire).CurrentValues.SetValues(commentaire);
+                    _context.Entry(existingComment).CurrentValues.SetValues(comment);
                     await _context.SaveChangesAsync();
                     return NoContent();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!CommentaireExists(commentaire.Id))
+                    if (!CommentExists(comment.Id))
                     {
                         return NotFound();
                     }
@@ -102,25 +102,25 @@ namespace Trello_back.Controllers
         }
 
 
-        // POST: Commentaire/Delete/5
+        // POST: Comment/Delete/5
         [HttpDelete("{id}")]
         // [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteCommentaire(int id)
+        public async Task<IActionResult> DeleteComment(int id)
         {
-            var commentaire = await _context.Commentaires.FindAsync(id);
-            if (commentaire == null)
+            var comment = await _context.Comments.FindAsync(id);
+            if (comment == null)
             {
                 return NotFound();
             }
 
-            _context.Commentaires.Remove(commentaire);
+            _context.Comments.Remove(comment);
             await _context.SaveChangesAsync();
             return NoContent();
         }
 
-        private bool CommentaireExists(int id)
+        private bool CommentExists(int id)
         {
-            return _context.Commentaires.Any(e => e.Id == id);
+            return _context.Comments.Any(e => e.Id == id);
         }
     }
 }

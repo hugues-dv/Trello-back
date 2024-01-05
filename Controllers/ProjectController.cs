@@ -8,72 +8,72 @@ namespace Trello_back.Controllers
 {
     [Route("/[controller]")]
     [ApiController]
-    public class ProjetController : Controller
+    public class ProjectController : Controller
     {
         private readonly TrelloContext _context;
 
-        public ProjetController(TrelloContext context)
+        public ProjectController(TrelloContext context)
         {
             _context = context;
         }
 
-        //GET: Projet
+        //GET: Project
         [HttpGet]
-        public async Task<IActionResult> GetProjets()
+        public async Task<IActionResult> GetProjects()
         {
-            var Projets = await _context.Projets.ToListAsync();
-            return Ok(Projets);
+            var Projects = await _context.Projects.ToListAsync();
+            return Ok(Projects);
         }
 
-        //GET: Projet/5
+        //GET: Project/5
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetProjetById(int? id)
+        public async Task<IActionResult> GetProjectById(int? id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var projet = await _context.Projets
+            var project = await _context.Projects
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (projet == null)
+            if (project == null)
             {
                 return NotFound();
             }
 
-            return Ok(projet);
+            return Ok(project);
         }
 
-        // POST: Projet/Create
+        // POST: Project/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         // [ValidateAntiForgeryToken]
-        public async Task<IActionResult> CreateProjet([Bind("Id,Nom,Description,DateCreation")] Projet projet)
+        public async Task<IActionResult> CreateProject([Bind("Id,Nom,Description,DateCreation")] Project project)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(projet);
+                _context.Add(project);
                 await _context.SaveChangesAsync();
-                return CreatedAtAction(nameof(GetProjetById), new { id = projet.Id }, projet);
+                return CreatedAtAction(nameof(GetProjectById), new { id = project.Id }, project);
             }
             return BadRequest(ModelState);
         }
 
-        // POST: Projet/Update/5
+        // POST: Project/Update/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPut("{id}")]
         // [ValidateAntiForgeryToken]
-        public async Task<IActionResult> UpdateProjet(int id, [Bind("Id,Nom,Description,DateCreation")] Projet projet)
+        public async Task<IActionResult> UpdateProject(int id, [Bind("Id,Nom,Description,DateCreation")] Project project)
         {
-            if (id != projet.Id)
+            if (id != project.Id)
             {
                 return NotFound();
             }
 
-            var existingProjet = await _context.Projets.FindAsync(id);
-            if (existingProjet == null)
+            var existingProject = await _context.Projects.FindAsync(id);
+            if (existingProject == null)
             {
                 return NotFound();
             }
@@ -82,13 +82,13 @@ namespace Trello_back.Controllers
             {
                 try
                 {
-                    _context.Entry(existingProjet).CurrentValues.SetValues(projet);
+                    _context.Entry(existingProject).CurrentValues.SetValues(project);
                     await _context.SaveChangesAsync();
                     return NoContent();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!ProjetExists(projet.Id))
+                    if (!ProjectExists(project.Id))
                     {
                         return NotFound();
                     }
@@ -101,24 +101,24 @@ namespace Trello_back.Controllers
             return BadRequest(ModelState);
         }
 
-        // POST: Projet/Delete/5
+        // POST: Project/Delete/5
         [HttpDelete("{id}")]
         // [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteProjet(int id)
+        public async Task<IActionResult> DeleteProject(int id)
         {
-            var projet = await _context.Projets.FindAsync(id);
-            if (projet == null)
+            var project = await _context.Projects.FindAsync(id);
+            if (project == null)
             {
                 return NotFound();
             }
 
-            _context.Projets.Remove(projet);
+            _context.Projects.Remove(project);
             await _context.SaveChangesAsync();
             return NoContent();
         }
-        private bool ProjetExists(int id)
+        private bool ProjectExists(int id)
         {
-            return _context.Projets.Any(e => e.Id == id);
+            return _context.Projects.Any(e => e.Id == id);
         }
 
     }

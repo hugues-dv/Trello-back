@@ -49,7 +49,7 @@ namespace Trello_back.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         // [ValidateAntiForgeryToken]
-        public async Task<IActionResult> CreateCard([Bind("Id,Titre,Description,DateCreation,IdListe")] Card card)
+        public async Task<IActionResult> CreateCard([Bind("id,title,description,createdAt,idList")] Card card)
         {
             if (ModelState.IsValid)
             {
@@ -65,7 +65,7 @@ namespace Trello_back.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPut("{id}")]
         // [ValidateAntiForgeryToken]
-        public async Task<IActionResult> UpdateCard(int id, [Bind("Id,Titre,Description,DateCreation,IdListe")] Card card)
+        public async Task<IActionResult> UpdateCard(int id, [Bind("id,title,description,createdAt,idList")] Card card)
         {
             if (id != card.Id)
             {

@@ -8,72 +8,72 @@ namespace Trello_back.Controllers
 {
     [Route("/[controller]")]
     [ApiController]
-    public class CarteController : Controller
+    public class CardController : Controller
     {
         private readonly TrelloContext _context;
 
-        public CarteController(TrelloContext context)
+        public CardController(TrelloContext context)
         {
             _context = context;
         }
 
-        // GET: Carte
+        // GET: Card
         [HttpGet]
-        public async Task<IActionResult> GetCartes()
+        public async Task<IActionResult> GetCards()
         {
-            var Cartes = await _context.Cartes.ToListAsync();
-            return Ok(Cartes);
+            var Cards = await _context.Cards.ToListAsync();
+            return Ok(Cards);
         }
 
-        // GET: Carte/5
+        // GET: Card/5
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetCarteById(int? id)
+        public async Task<IActionResult> GetCardById(int? id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var carte = await _context.Cartes
+            var card = await _context.Cards
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (carte == null)
+            if (card == null)
             {
                 return NotFound();
             }
 
-            return Ok(carte);
+            return Ok(card);
         }
 
-        // POST: Carte/Create
+        // POST: Card/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         // [ValidateAntiForgeryToken]
-        public async Task<IActionResult> CreateCarte([Bind("Id,Titre,Description,DateCreation,IdListe")] Carte carte)
+        public async Task<IActionResult> CreateCard([Bind("Id,Titre,Description,DateCreation,IdListe")] Card card)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(carte);
+                _context.Add(card);
                 await _context.SaveChangesAsync();
-                return CreatedAtAction(nameof(GetCarteById), new { id = carte.Id }, carte);
+                return CreatedAtAction(nameof(GetCardById), new { id = card.Id }, card);
             }
             return BadRequest(ModelState);
         }
 
-        // POST: Carte/Update/5
+        // POST: Card/Update/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPut("{id}")]
         // [ValidateAntiForgeryToken]
-        public async Task<IActionResult> UpdateCarte(int id, [Bind("Id,Titre,Description,DateCreation,IdListe")] Carte carte)
+        public async Task<IActionResult> UpdateCard(int id, [Bind("Id,Titre,Description,DateCreation,IdListe")] Card card)
         {
-            if (id != carte.Id)
+            if (id != card.Id)
             {
                 return NotFound();
             }
 
-            var existingCarte = await _context.Cartes.FindAsync(id);
-            if (existingCarte == null)
+            var existingCard = await _context.Cards.FindAsync(id);
+            if (existingCard == null)
             {
                 return NotFound();
             }
@@ -82,13 +82,13 @@ namespace Trello_back.Controllers
             {
                 try
                 {
-                    _context.Entry(existingCarte).CurrentValues.SetValues(carte);
+                    _context.Entry(existingCard).CurrentValues.SetValues(card);
                     await _context.SaveChangesAsync();
                     return NoContent();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!CarteExists(carte.Id))
+                    if (!CardExists(card.Id))
                     {
                         return NotFound();
                     }
@@ -101,24 +101,24 @@ namespace Trello_back.Controllers
             return BadRequest(ModelState);
         }
 
-        // POST: Carte/Delete/5
+        // POST: Card/Delete/5
         [HttpDelete("{id}")]
         // [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteCarte(int id)
+        public async Task<IActionResult> DeleteCard(int id)
         {
-            var carte = await _context.Cartes.FindAsync(id);
-            if (carte == null)
+            var card = await _context.Cards.FindAsync(id);
+            if (card == null)
             {
                 return NotFound();
             }
 
-            _context.Cartes.Remove(carte);
+            _context.Cards.Remove(card);
             await _context.SaveChangesAsync();
             return NoContent();
         }
-        private bool CarteExists(int id)
+        private bool CardExists(int id)
         {
-            return _context.Cartes.Any(e => e.Id == id);
+            return _context.Cards.Any(e => e.Id == id);
         }
     }
 }

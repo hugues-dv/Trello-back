@@ -49,7 +49,7 @@ namespace Trello_back.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         // [ValidateAntiForgeryToken]
-        public async Task<IActionResult> CreateProject([Bind("Id,Nom,Description,DateCreation")] Project project)
+        public async Task<IActionResult> CreateProject([Bind("id,name,description,createdAt")] Project project)
         {
             if (ModelState.IsValid)
             {
@@ -65,7 +65,7 @@ namespace Trello_back.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPut("{id}")]
         // [ValidateAntiForgeryToken]
-        public async Task<IActionResult> UpdateProject(int id, [Bind("Id,Nom,Description,DateCreation")] Project project)
+        public async Task<IActionResult> UpdateProject(int id, [Bind("id,name,description,createdAt")] Project project)
         {
             if (id != project.Id)
             {

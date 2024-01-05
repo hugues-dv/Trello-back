@@ -1,15 +1,15 @@
-CREATE DATABASE IF NOT EXISTS Trello.db; 
+-- CREATE DATABASE IF NOT EXISTS Trello.db; 
 
 -- SQLite
 CREATE TABLE IF NOT EXISTS Project (
-    id INT PRIMARY KEY,
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
     name varchar (50),
     description varchar (50),
     createdAt DATETIME
 ); 
 
 CREATE TABLE IF NOT EXISTS List (
-    id INT PRIMARY KEY,
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
     name varchar (50),
     idProject INT,
     FOREIGN KEY (idProject) REFERENCES Project(id) ON DELETE CASCADE
@@ -17,7 +17,7 @@ CREATE TABLE IF NOT EXISTS List (
 
 
 CREATE TABLE IF NOT EXISTS Card (
-    id INT PRIMARY KEY ,
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
     title varchar (50),
     description varchar (50),
     createdAt DATETIME,
@@ -26,15 +26,10 @@ CREATE TABLE IF NOT EXISTS Card (
 );
 
 CREATE TABLE IF NOT EXISTS Comment (
-    id INT PRIMARY KEY,
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
     content varchar (50),
     createdAt DATETIME,
     idCard INT,
     user varchar (50),
     FOREIGN KEY (idCard) REFERENCES Card(id) ON DELETE CASCADE
 );
-
-
-
-
-

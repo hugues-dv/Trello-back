@@ -33,10 +33,7 @@ public partial class TrelloContext : DbContext
         {
             entity.ToTable("Card");
 
-            entity.Property(e => e.Id)
-                .ValueGeneratedNever()
-                .HasColumnType("INT")
-                .HasColumnName("id");
+            entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.CreatedAt)
                 .HasColumnType("DATETIME")
                 .HasColumnName("createdAt");
@@ -59,10 +56,7 @@ public partial class TrelloContext : DbContext
         {
             entity.ToTable("Comment");
 
-            entity.Property(e => e.Id)
-                .ValueGeneratedNever()
-                .HasColumnType("INT")
-                .HasColumnName("id");
+            entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.Content)
                 .HasColumnType("varchar (50)")
                 .HasColumnName("content");
@@ -85,10 +79,7 @@ public partial class TrelloContext : DbContext
         {
             entity.ToTable("List");
 
-            entity.Property(e => e.Id)
-                .ValueGeneratedNever()
-                .HasColumnType("INT")
-                .HasColumnName("id");
+            entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.IdProject)
                 .HasColumnType("INT")
                 .HasColumnName("idProject");
@@ -105,10 +96,7 @@ public partial class TrelloContext : DbContext
         {
             entity.ToTable("Project");
 
-            entity.Property(e => e.Id)
-                .ValueGeneratedNever()
-                .HasColumnType("INT")
-                .HasColumnName("id");
+            entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.CreatedAt)
                 .HasColumnType("DATETIME")
                 .HasColumnName("createdAt");

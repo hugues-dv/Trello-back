@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Trello_back.Models;
 
+
 namespace Trello_back.Controllers
 {
     [Route("/[controller]")]
@@ -19,10 +20,14 @@ namespace Trello_back.Controllers
 
         // GET: Card
         [HttpGet]
-        public async Task<IActionResult> GetCards()
+        public IActionResult GetCards(int? IdList)
         {
-            var Cards = await _context.Cards.ToListAsync();
-            return Ok(Cards);
+            IQueryable<Card> cards = _context.Cards;
+            if (IdList != null)
+            {
+                cards = cards.Where(m => m.IdList == IdList);
+            }
+            return Ok(cards);
         }
 
         // GET: Card/5
@@ -43,6 +48,24 @@ namespace Trello_back.Controllers
 
             return Ok(card);
         }
+        // GET Card?listId=5
+        // [HttpGet]
+        // public async Task<ActionResult<IEnumerable<Card>>> GetCardsByListId(int? listId)
+        // {
+        //     if (listId == null)
+        //     {
+        //         return BadRequest();
+        //     }
+
+        //     var cards = await _context.Cards.Where(c => c.IdList == listId).ToListAsync();
+
+        //     if (cards == null)
+        //     {
+        //         return NotFound();
+        //     }
+
+        //     return cards;
+        // }
 
         // POST: Card/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.

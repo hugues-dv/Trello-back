@@ -17,12 +17,15 @@ namespace Trello_back.Controllers
             _context = context;
         }
         // GET: Comment
-
         [HttpGet]
-        public async Task<IActionResult> GetComments()
+        public IActionResult GetComments(int? IdCard)
         {
-            var Comments = await _context.Comments.ToListAsync();
-            return Ok(Comments);
+            IQueryable<Comment> comments = _context.Comments;
+            if (IdCard != null)
+            {
+                comments = comments.Where(m => m.IdCard == IdCard);
+            }
+            return Ok(comments);
         }
 
         // GET: Comment/5

@@ -19,7 +19,7 @@ jobs:
       - name: Set up .NET Core
         uses: actions/setup-dotnet@v1
         with:
-          dotnet-version: "8.x"
+          dotnet-version: '8.x'
           include-prerelease: true
 
       - name: Build with dotnet
@@ -38,20 +38,29 @@ jobs:
     runs-on: windows-latest
     needs: build
     environment:
-      name: "Production"
+      name: 'Production'
       url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
+    permissions:
+      id-token: write #This is required for requesting the JWT
 
     steps:
       - name: Download artifact from build job
         uses: actions/download-artifact@v3
         with:
           name: .net-app
+      
+      - name: Login to Azure
+        uses: azure/login@v1
+        with:
+          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_42751ABDF76746D28BA550E8F133A0AF }}
+          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_A457F97897AB4CADA417F71497FB7463 }}
+          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_680FF1A9540F4299BAFC84A1FE9CF8EF }}
 
       - name: Deploy to Azure Web App
         id: deploy-to-webapp
         uses: azure/webapps-deploy@v2
         with:
-          app-name: "minitrelloback"
-          slot-name: "Production"
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_93E82ADEA687482591330FE9A9D4F40E }}
+          app-name: 'minitrelloback'
+          slot-name: 'Production'
           package: .
+          

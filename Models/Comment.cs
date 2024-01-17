@@ -13,7 +13,9 @@ public partial class Comment
 
     public int? IdCard { get; set; }
 
-    public string? User { get; set; }
+    public int? IdUser { get; set; }
 
     public virtual Card? IdCardNavigation { get; set; }
+
+    public virtual User? IdUserNavigation { get; set; }
 }

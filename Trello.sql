@@ -26,7 +26,7 @@ CREATE TABLE IF NOT EXISTS Card (
 );
 
 CREATE TABLE IF NOT EXISTS User (
-    username varchar (50) PRIMARY KEY,
+    username varchar (255) PRIMARY KEY,
     password TEXT
 );
 
@@ -35,7 +35,7 @@ CREATE TABLE IF NOT EXISTS Comment (
     content TEXT (1000),
     createdAt DATETIME,
     idCard INT,
-    username INT,
+    username VARCHAR(255),
     FOREIGN KEY (idCard) REFERENCES Card(id) ON DELETE CASCADE,
     FOREIGN KEY (username) REFERENCES User(username) ON DELETE CASCADE
 );

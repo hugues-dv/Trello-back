@@ -24,10 +24,10 @@ public class UserController : ControllerBase
     }
 
     // GET: api/User/5
-    [HttpGet("{id}")]
-    public async Task<ActionResult<User>> GetUser(int id)
+    [HttpGet("{username}")]
+    public async Task<ActionResult<User>> GetUser(string username)
     {
-        var User = await _context.Users.FindAsync(id);
+        var User = await _context.Users.FindAsync(username);
         if (User == null)
         {
             return NotFound();

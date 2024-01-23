@@ -1,4 +1,4 @@
--- CREATE DATABASE IF NOT EXISTS Trello.db; 
+-- CREATE DATABASE IF NOT EXISTS Trello.db;
 
 -- SQLite
 CREATE TABLE IF NOT EXISTS Project (
@@ -25,18 +25,17 @@ CREATE TABLE IF NOT EXISTS Card (
     FOREIGN KEY (idList) REFERENCES List(id) ON DELETE CASCADE
 );
 
+CREATE TABLE IF NOT EXISTS User (
+    username varchar (50) PRIMARY KEY,
+    password TEXT
+);
+
 CREATE TABLE IF NOT EXISTS Comment (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     content TEXT (1000),
     createdAt DATETIME,
     idCard INT,
-    idUser INT,
+    username INT,
     FOREIGN KEY (idCard) REFERENCES Card(id) ON DELETE CASCADE,
-    FOREIGN KEY (idUser) REFERENCES User(id) ON DELETE CASCADE
-);
-
-CREATE TABLE IF NOT EXISTS User (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    username varchar (50),
-    password TEXT
+    FOREIGN KEY (username) REFERENCES User(username) ON DELETE CASCADE
 );

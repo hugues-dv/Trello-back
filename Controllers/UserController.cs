@@ -23,7 +23,7 @@ public class UserController : ControllerBase
         return Ok(Users);
     }
 
-    // GET: api/User/5
+    // GET: api/User/Username
     [HttpGet("{username}")]
     public async Task<ActionResult<User>> GetUser(string username)
     {
@@ -35,7 +35,7 @@ public class UserController : ControllerBase
         return User;
     }
 
-    // PUT: api/User/5
+    // PUT: api/User/Username
     // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
     [HttpPut("{username}")]
     public async Task<IActionResult> PutUser(string username)
@@ -68,7 +68,7 @@ public class UserController : ControllerBase
         return BadRequest(ModelState);
     }
 
-    // POST: User/Update/5
+    // POST: User/Update/Username
     // To protect from overposting attacks, enable the specific properties you want to bind to.
     // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
     [HttpPut("{username}")]
@@ -109,9 +109,9 @@ public class UserController : ControllerBase
         return BadRequest(ModelState);
     }
 
-    // DELETE: api/User/5
+    // DELETE: api/User/Username
     [HttpDelete("{username}")]
-    public async Task<IActionResult> DeleteUser(int username)
+    public async Task<IActionResult> DeleteUser(string username)
     {
         var User = await _context.Users.FindAsync(username);
         if (User == null)

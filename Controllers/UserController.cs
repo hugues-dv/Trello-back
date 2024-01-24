@@ -15,112 +15,35 @@ public class UserController : ControllerBase
         _context = context;
     }
 
-    // GET: api/User
-    [HttpGet]
-    public async Task<ActionResult<User>> GetUsers()
+    private bool ValidateUser(string username, string password)
     {
-        var Users = await _context.Users.ToArrayAsync();
-        return Ok(Users);
+        // Implémentez la logique de validation ici
+        return true;
     }
 
-    // GET: api/User/Username
-    [HttpGet("{username}")]
-    public async Task<ActionResult<User>> GetUser(string username)
+    [HttpPost("register")]
+    public IActionResult Register([FromBody] User user)
     {
-        var User = await _context.Users.FindAsync(username);
-        if (User == null)
-        {
-            return NotFound();
-        }
-        return User;
+        // Ajoutez l'utilisateur à votre base de données
+        // Gérez les erreurs et les validations
+        return Ok();
     }
 
-    // PUT: api/User/Username
-    // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-    [HttpPut("{username}")]
-    public async Task<IActionResult> PutUser(string username)
+    [HttpPost("login")]
+    public IActionResult Login([FromBody] User user)
     {
-        if (username == null)
+        if (ValidateUser(user.Username, user.Password))
         {
-            return NotFound();
+            var tokenString = GenerateJWTToken(user.Username);
+            return Ok(new { Token = tokenString });
         }
-        var user = await _context.Users
-            .FirstOrDefaultAsync(m => m.Username == username);
-        if (user == null)
-        {
-            return NotFound();
-        }
-
-        return Ok(user);
+        return Unauthorized();
     }
 
-    // POST: api/User
-    // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-    [HttpPost]
-    public async Task<ActionResult<User>> CreateUser([Bind("Username, Password")] User user)
+    private string GenerateJWTToken(string username)
     {
-        if (ModelState.IsValid)
-        {
-            _context.Add(user);
-            await _context.SaveChangesAsync();
-            return CreatedAtAction(nameof(GetUser), new { username = user.Username }, user);
-        }
-        return BadRequest(ModelState);
-    }
-
-    // POST: User/Update/Username
-    // To protect from overposting attacks, enable the specific properties you want to bind to.
-    // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-    [HttpPut("{username}")]
-    // [ValidateAntiForgeryToken]
-    public async Task<IActionResult> UpdateUser(string username, [Bind("Username,Password")] User user)
-    {
-        if (username != user.Username)
-        {
-            return NotFound();
-        }
-
-        var existingUser = await _context.Users.FindAsync(username);
-        if (existingUser == null)
-        {
-            return NotFound();
-        }
-
-        if (ModelState.IsValid)
-        {
-            try
-            {
-                _context.Entry(existingUser).CurrentValues.SetValues(user);
-                await _context.SaveChangesAsync();
-                return NoContent();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!UserExists(user.Username))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-        }
-        return BadRequest(ModelState);
-    }
-
-    // DELETE: api/User/Username
-    [HttpDelete("{username}")]
-    public async Task<IActionResult> DeleteUser(string username)
-    {
-        var User = await _context.Users.FindAsync(username);
-        if (User == null)
-        {
-            return NotFound();
-        }
-        _context.Users.Remove(User);
-        await _context.SaveChangesAsync();
-        return NoContent();
+        // Générez ici votre JWT
+        return "token";
     }
 
     private bool UserExists(string username)

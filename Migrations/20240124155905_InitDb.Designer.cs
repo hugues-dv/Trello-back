@@ -12,8 +12,8 @@ using Trello_back.Models;
 namespace Trello_back.Migrations
 {
     [DbContext(typeof(TrelloContext))]
-    [Migration("20240110125524_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20240124155905_InitDb")]
+    partial class InitDb
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using Microsoft.EntityFrameworkCore;
 
 namespace Trello_back.Models;
 
 public partial class TrelloContext : DbContext
 {
+    private readonly IConfiguration _configuration;
     public TrelloContext()
     {
         // Create the database if it doesn't exist
@@ -14,8 +16,11 @@ public partial class TrelloContext : DbContext
         Database.Migrate();
     }
 
-    public TrelloContext(DbContextOptions<TrelloContext> options)
-        : base(options) { }
+    public TrelloContext(DbContextOptions<TrelloContext> options, IConfiguration configuration)
+        : base(options)
+    {
+        _configuration = configuration;
+    }
 
     public virtual DbSet<Card> Cards { get; set; }
 
@@ -26,13 +31,27 @@ public partial class TrelloContext : DbContext
     public virtual DbSet<Project> Projects { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
-        // =>
-        // optionsBuilder.UseSqlServer(
-        //     "Server=tcp:trello.database.windows.net,1433;Initial Catalog=Trello;Persist Security Info=False;User ID=Groupe2;Password=M1n1Tr3770;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
-        // );
+    {
+        if (!optionsBuilder.IsConfigured)
+        // {
+        //     string connectionString = _configuration.GetConnectionString("MyConnectionString");
 
-    => optionsBuilder.UseSqlite("Data Source=Trello.db");
+        //     // Configurer Entity Framework pour utiliser SQL Server avec la chaîne de connexion
+        //     optionsBuilder.UseSqlServer(connectionString);
+        // }
+        {
+            string connectionString = _configuration.GetConnectionString("MySqliteString");
+
+            // Configurer Entity Framework pour utiliser SQL Server avec la chaîne de connexion
+            optionsBuilder.UseSqlite(connectionString);
+        }
+    }
+    // =>
+    // optionsBuilder.UseSqlServer(
+    //     ConnectionStrings
+    //     );
+
+    // => optionsBuilder.UseSqlite("Data Source=Trello.db");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

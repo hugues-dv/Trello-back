@@ -30,6 +30,8 @@ public partial class TrelloContext : DbContext
 
     public virtual DbSet<Project> Projects { get; set; }
 
+    public virtual DbSet<User> Users { get; set; }
+
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         if (!optionsBuilder.IsConfigured)
@@ -60,17 +62,20 @@ public partial class TrelloContext : DbContext
             entity.ToTable("Card");
 
             entity.Property(e => e.Id).HasColumnName("id");
-            entity.Property(e => e.CreatedAt).HasColumnType("DATETIME").HasColumnName("createdAt");
-            entity
-                .Property(e => e.Description)
-                .HasColumnType("varchar (50)")
+            entity.Property(e => e.CreatedAt)
+                .HasColumnType("DATETIME")
+                .HasColumnName("createdAt");
+            entity.Property(e => e.Description)
+                .HasColumnType("TEXT (500)")
                 .HasColumnName("description");
-            entity.Property(e => e.IdList).HasColumnType("INT").HasColumnName("idList");
-            entity.Property(e => e.Title).HasColumnType("varchar (50)").HasColumnName("title");
+            entity.Property(e => e.IdList)
+                .HasColumnType("INT")
+                .HasColumnName("idList");
+            entity.Property(e => e.Title)
+                .HasColumnType("varchar (255)")
+                .HasColumnName("title");
 
-            entity
-                .HasOne(d => d.IdListNavigation)
-                .WithMany(p => p.Cards)
+            entity.HasOne(d => d.IdListNavigation).WithMany(p => p.Cards)
                 .HasForeignKey(d => d.IdList)
                 .OnDelete(DeleteBehavior.Cascade);
         });
@@ -80,15 +85,25 @@ public partial class TrelloContext : DbContext
             entity.ToTable("Comment");
 
             entity.Property(e => e.Id).HasColumnName("id");
-            entity.Property(e => e.Content).HasColumnType("varchar (50)").HasColumnName("content");
-            entity.Property(e => e.CreatedAt).HasColumnType("DATETIME").HasColumnName("createdAt");
-            entity.Property(e => e.IdCard).HasColumnType("INT").HasColumnName("idCard");
-            entity.Property(e => e.User).HasColumnType("varchar (50)").HasColumnName("user");
+            entity.Property(e => e.Content)
+                .HasColumnType("TEXT (1000)")
+                .HasColumnName("content");
+            entity.Property(e => e.CreatedAt)
+                .HasColumnType("DATETIME")
+                .HasColumnName("createdAt");
+            entity.Property(e => e.IdCard)
+                .HasColumnType("INT")
+                .HasColumnName("idCard");
+            entity.Property(e => e.Username)
+                .HasColumnType("VARCHAR(255)")
+                .HasColumnName("username");
 
-            entity
-                .HasOne(d => d.IdCardNavigation)
-                .WithMany(p => p.Comments)
+            entity.HasOne(d => d.IdCardNavigation).WithMany(p => p.Comments)
                 .HasForeignKey(d => d.IdCard)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasOne(d => d.UsernameNavigation).WithMany(p => p.Comments)
+                .HasForeignKey(d => d.Username)
                 .OnDelete(DeleteBehavior.Cascade);
         });
 
@@ -97,12 +112,14 @@ public partial class TrelloContext : DbContext
             entity.ToTable("List");
 
             entity.Property(e => e.Id).HasColumnName("id");
-            entity.Property(e => e.IdProject).HasColumnType("INT").HasColumnName("idProject");
-            entity.Property(e => e.Name).HasColumnType("varchar (50)").HasColumnName("name");
+            entity.Property(e => e.IdProject)
+                .HasColumnType("INT")
+                .HasColumnName("idProject");
+            entity.Property(e => e.Name)
+                .HasColumnType("varchar (50)")
+                .HasColumnName("name");
 
-            entity
-                .HasOne(d => d.IdProjectNavigation)
-                .WithMany(p => p.Lists)
+            entity.HasOne(d => d.IdProjectNavigation).WithMany(p => p.Lists)
                 .HasForeignKey(d => d.IdProject)
                 .OnDelete(DeleteBehavior.Cascade);
         });
@@ -112,12 +129,27 @@ public partial class TrelloContext : DbContext
             entity.ToTable("Project");
 
             entity.Property(e => e.Id).HasColumnName("id");
-            entity.Property(e => e.CreatedAt).HasColumnType("DATETIME").HasColumnName("createdAt");
-            entity
-                .Property(e => e.Description)
-                .HasColumnType("varchar (50)")
+            entity.Property(e => e.CreatedAt)
+                .HasColumnType("DATETIME")
+                .HasColumnName("createdAt");
+            entity.Property(e => e.Description)
+                .HasColumnType("TEXT (500)")
                 .HasColumnName("description");
-            entity.Property(e => e.Name).HasColumnType("varchar (50)").HasColumnName("name");
+            entity.Property(e => e.Name)
+                .HasColumnType("varchar (50)")
+                .HasColumnName("name");
+        });
+
+        modelBuilder.Entity<User>(entity =>
+        {
+            entity.HasKey(e => e.Username);
+
+            entity.ToTable("User");
+
+            entity.Property(e => e.Username)
+                .HasColumnType("varchar (255)")
+                .HasColumnName("username");
+            entity.Property(e => e.Password).HasColumnName("password");
         });
 
         OnModelCreatingPartial(modelBuilder);

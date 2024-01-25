@@ -55,7 +55,7 @@ namespace Trello_back.Controllers
                 _context.Users.Add(newUser);
                 _context.SaveChanges();
 
-                return Ok("Inscription réussie.");
+                return Ok(new { message = "Inscription réussie." });
             }
             return BadRequest(ModelState);
         }

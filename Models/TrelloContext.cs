@@ -35,18 +35,18 @@ public partial class TrelloContext : DbContext
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         if (!optionsBuilder.IsConfigured)
-        // {
-        //     string connectionString = _configuration.GetConnectionString("MyConnectionString");
-
-        //     // Configurer Entity Framework pour utiliser SQL Server avec la chaîne de connexion
-        //     optionsBuilder.UseSqlServer(connectionString);
-        // }
         {
-            string connectionString = _configuration.GetConnectionString("MySqliteString");
+            string connectionString = _configuration.GetConnectionString("MyConnectionString");
 
             // Configurer Entity Framework pour utiliser SQL Server avec la chaîne de connexion
-            optionsBuilder.UseSqlite(connectionString);
+            optionsBuilder.UseSqlServer(connectionString);
         }
+        // {
+        //     string connectionString = _configuration.GetConnectionString("MySqliteString");
+
+        //     // Configurer Entity Framework pour utiliser SQL Server avec la chaîne de connexion
+        //     optionsBuilder.UseSqlite(connectionString);
+        // }
     }
     // =>
     // optionsBuilder.UseSqlServer(

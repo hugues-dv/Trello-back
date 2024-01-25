@@ -2,17 +2,18 @@ using Trello_back.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
-
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("MyPolicy",
+    options.AddPolicy(
+        "MyPolicy",
         policy =>
         {
-            policy.WithOrigins("http://localhost:4200", "https://minitrello.azurewebsites.net")
-                  .AllowAnyHeader()
-                  .AllowAnyMethod();
-
-        });
+            policy
+                .WithOrigins("https://minitrello.azurewebsites.net")
+                .AllowAnyHeader()
+                .AllowAnyMethod();
+        }
+    );
 });
 
 builder.Services.AddDbContext<TrelloContext>();
@@ -39,8 +40,6 @@ app.UseCors("MyPolicy");
 
 app.UseAuthorization();
 
-app.MapControllerRoute(
-    name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
+app.MapControllerRoute(name: "default", pattern: "{controller=Home}/{action=Index}/{id?}");
 
 app.Run();

@@ -15,7 +15,9 @@ public partial class TrelloContext : DbContext
     }
 
     public TrelloContext(DbContextOptions<TrelloContext> options)
-        : base(options) { }
+        : base(options)
+    {
+    }
 
     public virtual DbSet<Card> Cards { get; set; }
 
@@ -25,14 +27,15 @@ public partial class TrelloContext : DbContext
 
     public virtual DbSet<Project> Projects { get; set; }
 
+    public virtual DbSet<User> Users { get; set; }
+
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
-        =>
-        optionsBuilder.UseSqlServer(
-            "Server=tcp:trello.database.windows.net,1433;Initial Catalog=Trello;Persist Security Info=False;User ID=Groupe2;Password=M1n1Tr3770;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
-        );
-
-    // => optionsBuilder.UseSqlite("Data Source=Trello.db");
+        // =>
+        // optionsBuilder.UseSqlServer(
+        //     "Server=tcp:serveurtrellodb.database.windows.net,1433;Initial Catalog=trelloHuguesDB;Persist Security Info=False;User ID=Hugues;Password={your_password};MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
+        // );
+        => optionsBuilder.UseSqlite("Data Source=trello.db");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -41,17 +44,20 @@ public partial class TrelloContext : DbContext
             entity.ToTable("Card");
 
             entity.Property(e => e.Id).HasColumnName("id");
-            entity.Property(e => e.CreatedAt).HasColumnType("DATETIME").HasColumnName("createdAt");
-            entity
-                .Property(e => e.Description)
-                .HasColumnType("varchar (50)")
+            entity.Property(e => e.CreatedAt)
+                .HasColumnType("DATETIME")
+                .HasColumnName("createdAt");
+            entity.Property(e => e.Description)
+                .HasColumnType("TEXT (500)")
                 .HasColumnName("description");
-            entity.Property(e => e.IdList).HasColumnType("INT").HasColumnName("idList");
-            entity.Property(e => e.Title).HasColumnType("varchar (50)").HasColumnName("title");
+            entity.Property(e => e.IdList)
+                .HasColumnType("INT")
+                .HasColumnName("idList");
+            entity.Property(e => e.Title)
+                .HasColumnType("varchar (255)")
+                .HasColumnName("title");
 
-            entity
-                .HasOne(d => d.IdListNavigation)
-                .WithMany(p => p.Cards)
+            entity.HasOne(d => d.IdListNavigation).WithMany(p => p.Cards)
                 .HasForeignKey(d => d.IdList)
                 .OnDelete(DeleteBehavior.Cascade);
         });
@@ -61,15 +67,25 @@ public partial class TrelloContext : DbContext
             entity.ToTable("Comment");
 
             entity.Property(e => e.Id).HasColumnName("id");
-            entity.Property(e => e.Content).HasColumnType("varchar (50)").HasColumnName("content");
-            entity.Property(e => e.CreatedAt).HasColumnType("DATETIME").HasColumnName("createdAt");
-            entity.Property(e => e.IdCard).HasColumnType("INT").HasColumnName("idCard");
-            entity.Property(e => e.User).HasColumnType("varchar (50)").HasColumnName("user");
+            entity.Property(e => e.Content)
+                .HasColumnType("TEXT (1000)")
+                .HasColumnName("content");
+            entity.Property(e => e.CreatedAt)
+                .HasColumnType("DATETIME")
+                .HasColumnName("createdAt");
+            entity.Property(e => e.IdCard)
+                .HasColumnType("INT")
+                .HasColumnName("idCard");
+            entity.Property(e => e.Username)
+                .HasColumnType("VARCHAR(255)")
+                .HasColumnName("username");
 
-            entity
-                .HasOne(d => d.IdCardNavigation)
-                .WithMany(p => p.Comments)
+            entity.HasOne(d => d.IdCardNavigation).WithMany(p => p.Comments)
                 .HasForeignKey(d => d.IdCard)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasOne(d => d.UsernameNavigation).WithMany(p => p.Comments)
+                .HasForeignKey(d => d.Username)
                 .OnDelete(DeleteBehavior.Cascade);
         });
 
@@ -78,12 +94,14 @@ public partial class TrelloContext : DbContext
             entity.ToTable("List");
 
             entity.Property(e => e.Id).HasColumnName("id");
-            entity.Property(e => e.IdProject).HasColumnType("INT").HasColumnName("idProject");
-            entity.Property(e => e.Name).HasColumnType("varchar (50)").HasColumnName("name");
+            entity.Property(e => e.IdProject)
+                .HasColumnType("INT")
+                .HasColumnName("idProject");
+            entity.Property(e => e.Name)
+                .HasColumnType("varchar (50)")
+                .HasColumnName("name");
 
-            entity
-                .HasOne(d => d.IdProjectNavigation)
-                .WithMany(p => p.Lists)
+            entity.HasOne(d => d.IdProjectNavigation).WithMany(p => p.Lists)
                 .HasForeignKey(d => d.IdProject)
                 .OnDelete(DeleteBehavior.Cascade);
         });
@@ -93,12 +111,27 @@ public partial class TrelloContext : DbContext
             entity.ToTable("Project");
 
             entity.Property(e => e.Id).HasColumnName("id");
-            entity.Property(e => e.CreatedAt).HasColumnType("DATETIME").HasColumnName("createdAt");
-            entity
-                .Property(e => e.Description)
-                .HasColumnType("varchar (50)")
+            entity.Property(e => e.CreatedAt)
+                .HasColumnType("DATETIME")
+                .HasColumnName("createdAt");
+            entity.Property(e => e.Description)
+                .HasColumnType("TEXT (500)")
                 .HasColumnName("description");
-            entity.Property(e => e.Name).HasColumnType("varchar (50)").HasColumnName("name");
+            entity.Property(e => e.Name)
+                .HasColumnType("varchar (50)")
+                .HasColumnName("name");
+        });
+
+        modelBuilder.Entity<User>(entity =>
+        {
+            entity.HasKey(e => e.Username);
+
+            entity.ToTable("User");
+
+            entity.Property(e => e.Username)
+                .HasColumnType("varchar (255)")
+                .HasColumnName("username");
+            entity.Property(e => e.Password).HasColumnName("password");
         });
 
         OnModelCreatingPartial(modelBuilder);

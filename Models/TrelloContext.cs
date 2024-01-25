@@ -35,18 +35,18 @@ public partial class TrelloContext : DbContext
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         if (!optionsBuilder.IsConfigured)
-        // {
-        //     string connectionString = _configuration.GetConnectionString("MyConnectionString");
-
-        //     // Configurer Entity Framework pour utiliser SQL Server avec la chaîne de connexion
-        //     optionsBuilder.UseSqlServer(connectionString);
-        // }
         {
-            string connectionString = _configuration.GetConnectionString("MySqliteString");
+            string connectionString = _configuration.GetConnectionString("MyConnectionString");
 
             // Configurer Entity Framework pour utiliser SQL Server avec la chaîne de connexion
-            optionsBuilder.UseSqlite(connectionString);
+            optionsBuilder.UseSqlServer(connectionString);
         }
+        // {
+        //     string connectionString = _configuration.GetConnectionString("MySqliteString");
+
+        //     // Configurer Entity Framework pour utiliser SQL Server avec la chaîne de connexion
+        //     optionsBuilder.UseSqlite(connectionString);
+        // }
     }
     // =>
     // optionsBuilder.UseSqlServer(
@@ -66,7 +66,7 @@ public partial class TrelloContext : DbContext
                 .HasColumnType("DATETIME")
                 .HasColumnName("createdAt");
             entity.Property(e => e.Description)
-                .HasColumnType("TEXT (500)")
+                .HasColumnType("TEXT")
                 .HasColumnName("description");
             entity.Property(e => e.IdList)
                 .HasColumnType("INT")
@@ -86,7 +86,7 @@ public partial class TrelloContext : DbContext
 
             entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.Content)
-                .HasColumnType("TEXT (1000)")
+                .HasColumnType("TEXT")
                 .HasColumnName("content");
             entity.Property(e => e.CreatedAt)
                 .HasColumnType("DATETIME")
@@ -133,7 +133,7 @@ public partial class TrelloContext : DbContext
                 .HasColumnType("DATETIME")
                 .HasColumnName("createdAt");
             entity.Property(e => e.Description)
-                .HasColumnType("TEXT (500)")
+                .HasColumnType("TEXT")
                 .HasColumnName("description");
             entity.Property(e => e.Name)
                 .HasColumnType("varchar (50)")

@@ -3,7 +3,6 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
-using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Trello_back.Models;
 
@@ -12,11 +11,9 @@ using Trello_back.Models;
 namespace Trello_back.Migrations
 {
     [DbContext(typeof(TrelloContext))]
-    [Migration("20240124155905_InitDb")]
-    partial class InitDb
+    partial class TrelloContextModelSnapshot : ModelSnapshot
     {
-        /// <inheritdoc />
-        protected override void BuildTargetModel(ModelBuilder modelBuilder)
+        protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -39,7 +36,7 @@ namespace Trello_back.Migrations
                         .HasColumnName("createdAt");
 
                     b.Property<string>("Description")
-                        .HasColumnType("varchar (50)")
+                        .HasColumnType("TEXT")
                         .HasColumnName("description");
 
                     b.Property<int?>("IdList")
@@ -47,7 +44,7 @@ namespace Trello_back.Migrations
                         .HasColumnName("idList");
 
                     b.Property<string>("Title")
-                        .HasColumnType("varchar (50)")
+                        .HasColumnType("varchar (255)")
                         .HasColumnName("title");
 
                     b.HasKey("Id");
@@ -67,7 +64,7 @@ namespace Trello_back.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Content")
-                        .HasColumnType("varchar (50)")
+                        .HasColumnType("TEXT")
                         .HasColumnName("content");
 
                     b.Property<DateTime?>("CreatedAt")
@@ -78,13 +75,15 @@ namespace Trello_back.Migrations
                         .HasColumnType("INT")
                         .HasColumnName("idCard");
 
-                    b.Property<string>("User")
-                        .HasColumnType("varchar (50)")
-                        .HasColumnName("user");
+                    b.Property<string>("Username")
+                        .HasColumnType("VARCHAR(255)")
+                        .HasColumnName("username");
 
                     b.HasKey("Id");
 
                     b.HasIndex("IdCard");
+
+                    b.HasIndex("Username");
 
                     b.ToTable("Comment", (string)null);
                 });
@@ -127,7 +126,7 @@ namespace Trello_back.Migrations
                         .HasColumnName("createdAt");
 
                     b.Property<string>("Description")
-                        .HasColumnType("varchar (50)")
+                        .HasColumnType("TEXT")
                         .HasColumnName("description");
 
                     b.Property<string>("Name")
@@ -137,6 +136,21 @@ namespace Trello_back.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Project", (string)null);
+                });
+
+            modelBuilder.Entity("Trello_back.Models.User", b =>
+                {
+                    b.Property<string>("Username")
+                        .HasColumnType("varchar (255)")
+                        .HasColumnName("username");
+
+                    b.Property<string>("Password")
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("password");
+
+                    b.HasKey("Username");
+
+                    b.ToTable("User", (string)null);
                 });
 
             modelBuilder.Entity("Trello_back.Models.Card", b =>
@@ -156,7 +170,14 @@ namespace Trello_back.Migrations
                         .HasForeignKey("IdCard")
                         .OnDelete(DeleteBehavior.Cascade);
 
+                    b.HasOne("Trello_back.Models.User", "UsernameNavigation")
+                        .WithMany("Comments")
+                        .HasForeignKey("Username")
+                        .OnDelete(DeleteBehavior.Cascade);
+
                     b.Navigation("IdCardNavigation");
+
+                    b.Navigation("UsernameNavigation");
                 });
 
             modelBuilder.Entity("Trello_back.Models.List", b =>
@@ -182,6 +203,11 @@ namespace Trello_back.Migrations
             modelBuilder.Entity("Trello_back.Models.Project", b =>
                 {
                     b.Navigation("Lists");
+                });
+
+            modelBuilder.Entity("Trello_back.Models.User", b =>
+                {
+                    b.Navigation("Comments");
                 });
 #pragma warning restore 612, 618
         }

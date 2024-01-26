@@ -9,7 +9,7 @@ builder.Services.AddCors(options =>
         policy =>
         {
             policy
-                .WithOrigins("https://minitrello.azurewebsites.net")
+                .WithOrigins("https://minitrello.azurewebsites.net", "http://localhost:4200")
                 .AllowAnyHeader()
                 .AllowAnyMethod();
         }

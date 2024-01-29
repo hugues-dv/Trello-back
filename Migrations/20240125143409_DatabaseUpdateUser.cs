@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Trello_back.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialCreate : Migration
+    public partial class DatabaseUpdateUser : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -18,12 +18,24 @@ namespace Trello_back.Migrations
                     id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     name = table.Column<string>(type: "varchar(50)", nullable: true),
-                    description = table.Column<string>(type: "varchar(50)", nullable: true),
+                    description = table.Column<string>(type: "TEXT", nullable: true),
                     createdAt = table.Column<DateTime>(type: "DATETIME", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Project", x => x.id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "User",
+                columns: table => new
+                {
+                    username = table.Column<string>(type: "varchar(255)", nullable: false),
+                    password = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_User", x => x.username);
                 });
 
             migrationBuilder.CreateTable(
@@ -52,8 +64,8 @@ namespace Trello_back.Migrations
                 {
                     id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    title = table.Column<string>(type: "varchar(50)", nullable: true),
-                    description = table.Column<string>(type: "varchar(50)", nullable: true),
+                    title = table.Column<string>(type: "varchar(255)", nullable: true),
+                    description = table.Column<string>(type: "TEXT", nullable: true),
                     createdAt = table.Column<DateTime>(type: "DATETIME", nullable: true),
                     idList = table.Column<int>(type: "INT", nullable: true)
                 },
@@ -74,10 +86,10 @@ namespace Trello_back.Migrations
                 {
                     id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    content = table.Column<string>(type: "varchar(50)", nullable: true),
+                    content = table.Column<string>(type: "TEXT", nullable: true),
                     createdAt = table.Column<DateTime>(type: "DATETIME", nullable: true),
                     idCard = table.Column<int>(type: "INT", nullable: true),
-                    user = table.Column<string>(type: "varchar(50)", nullable: true)
+                    username = table.Column<string>(type: "VARCHAR(255)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -87,6 +99,12 @@ namespace Trello_back.Migrations
                         column: x => x.idCard,
                         principalTable: "Card",
                         principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Comment_User_username",
+                        column: x => x.username,
+                        principalTable: "User",
+                        principalColumn: "username",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -99,6 +117,11 @@ namespace Trello_back.Migrations
                 name: "IX_Comment_idCard",
                 table: "Comment",
                 column: "idCard");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Comment_username",
+                table: "Comment",
+                column: "username");
 
             migrationBuilder.CreateIndex(
                 name: "IX_List_idProject",
@@ -114,6 +137,9 @@ namespace Trello_back.Migrations
 
             migrationBuilder.DropTable(
                 name: "Card");
+
+            migrationBuilder.DropTable(
+                name: "User");
 
             migrationBuilder.DropTable(
                 name: "List");
